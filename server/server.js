@@ -39,7 +39,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // --- 4. Server Initialization ---
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`
     🚀 Newark Frontiers Server Active
     📡 Port: ${PORT}
