@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'https://giddily-impart-smugly.ngrok-free.dev/api',
+    baseURL: 'https://newark-frontiers.onrender.com/api',
 });
 
 // Consolidated Interceptor: Handles Auth and Ngrok Bypassing

@@ -13,8 +13,8 @@ const app = express();
 app.use(cors({
     origin: [
         'http://localhost:5173',
-        'http://localhost:3000',
-        'https://giddily-impart-smugly.ngrok-free.dev' 
+        'http://newark-frontiers.onrender.com',
+        'https://newark-frontiers.vercel.app' 
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization', 'ngrok-skip-browser-warning'],
