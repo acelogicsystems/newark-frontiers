@@ -1,6 +1,6 @@
 require('dotenv').config();
 const options = {
-    apiKey: 'atsk_330d7321412fe0f8a46379725ded5c51a423ed90b5a33487487beb9fa75aece8d4611363',
+    apiKey: '',
     username: 'sandbox', // or your real username
 };
 const AfricasTalking = require('africastalking')(options);
