@@ -84,7 +84,7 @@ const Dashboard = () => {
         return;
     }
     try {
-        const res = await API.post('/auth/update-pin', { newPin });
+        await API.post('/auth/update-pin', { newPin });
         toast.success("Security PIN Established! 🔒");
         setIsPinSetupOpen(false);
         updateUserInfo({ ...user, transactionPin: newPin });
@@ -177,9 +177,12 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* LOAN TABLE */}
+        {/* --- LOAN HISTORY SECTION (Responsive) --- */}
         <section className="mt-10">
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+          <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4 px-1">Recent Transactions</h3>
+          
+          {/* DESKTOP TABLE (Hidden on Mobile) */}
+          <div className="hidden md:block bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
             <table className="w-full text-left">
               <thead className="bg-slate-50 border-b border-slate-100">
                 <tr>
@@ -222,6 +225,52 @@ const Dashboard = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* MOBILE CARDS (Hidden on Desktop) */}
+          <div className="md:hidden space-y-4">
+            {loans.length === 0 ? (
+                <div className="bg-white p-10 rounded-2xl border border-dashed border-slate-200 text-center text-slate-400 text-xs italic">
+                    No transactions yet.
+                </div>
+            ) : (
+                loans.map((loan) => (
+                    <div key={loan._id} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Amount Due</p>
+                          <h4 className="text-lg font-black text-brand-dark">KES {loan.amount.toLocaleString()}</h4>
+                          <p className="text-xs text-slate-500 italic mt-1">{loan.purpose}</p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase border 
+                          ${loan.status === 'disbursed' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+                          loan.status === 'paid' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
+                          'bg-amber-50 text-amber-600 border-amber-100'}`}>
+                          {loan.status}
+                        </span>
+                      </div>
+                      
+                      <div className="pt-4 border-t border-slate-50">
+                        {(loan.status === 'approved' || loan.status === 'disbursed') ? (
+                          <button 
+                            onClick={() => handleRepayment(loan._id, loan.totalRepayable || loan.amount)} 
+                            className="w-full bg-brand-primary text-white py-3 rounded-xl text-xs font-black uppercase flex items-center justify-center gap-2 shadow-lg"
+                          >
+                            Clear Balance <ArrowRight size={14} />
+                          </button>
+                        ) : loan.status === 'paid' ? (
+                          <div className="flex items-center justify-center text-emerald-500 font-black text-xs uppercase gap-2">
+                            <CheckCircle size={14}/> Successfully Settled
+                          </div>
+                        ) : (
+                          <div className="text-center text-slate-400 text-[10px] uppercase font-bold italic tracking-widest">
+                            Application under review
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                ))
+            )}
           </div>
         </section>
       </main>

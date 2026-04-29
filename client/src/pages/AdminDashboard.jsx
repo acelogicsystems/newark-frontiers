@@ -4,7 +4,7 @@ import API from '../api';
 import toast from 'react-hot-toast';
 import { 
     LayoutDashboard, Users, FileText, CheckCircle, 
-    Clock, XCircle, LogOut, Search, Eye, Download, RefreshCw, Calendar, Phone, Activity, Menu
+    Clock, XCircle, LogOut, Search, Eye, Download, RefreshCw, Calendar, Phone, Activity, Menu, X
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -16,7 +16,7 @@ const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('all');
     const [selectedLoan, setSelectedLoan] = useState(null);
     const [isSyncing, setIsSyncing] = useState(false);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // For Mobile
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const fetchData = async (silent = false) => {
         if (!silent) setIsSyncing(true);
@@ -79,16 +79,29 @@ const AdminDashboard = () => {
         .filter(l => l.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
     return (
-        <div className="flex min-h-screen bg-[#05070a] font-sans text-slate-300">
+        <div className="flex min-h-screen bg-[#05070a] font-sans text-slate-300 overflow-x-hidden">
             
+            {/* --- MOBILE SIDEBAR OVERLAY --- */}
+            {isSidebarOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] lg:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
             {/* --- SIDEBAR --- */}
-            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#0a0c10] border-r border-white/5 transform transition-transform duration-300 lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <aside className={`fixed inset-y-0 left-0 z-[70] w-72 bg-[#0a0c10] border-r border-white/5 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="p-8 h-full flex flex-col">
-                    <div className="flex items-center gap-3 mb-12">
-                        <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center">
-                            <span className="text-black font-black text-xl italic">N</span>
+                    <div className="flex justify-between items-center mb-12">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center">
+                                <span className="text-black font-black text-xl italic">N</span>
+                            </div>
+                            <h1 className="text-white font-black text-lg tracking-tighter">NEWARK <span className="text-brand-primary">OPS</span></h1>
                         </div>
-                        <h1 className="text-white font-black text-lg tracking-tighter">NEWARK <span className="text-brand-primary">OPS</span></h1>
+                        <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-500">
+                            <X size={20} />
+                        </button>
                     </div>
                     
                     <nav className="space-y-2 flex-1">
@@ -96,33 +109,38 @@ const AdminDashboard = () => {
                         <SidebarLink active={view === 'borrowers'} onClick={() => {setView('borrowers'); setIsSidebarOpen(false)}} icon={<Users size={20}/>} label="Borrowers" />
                     </nav>
 
-                    <button onClick={handleLogout} className="flex items-center gap-3 text-slate-500 hover:text-red-500 transition-colors font-bold text-sm">
+                    <button onClick={handleLogout} className="flex items-center gap-3 text-slate-500 hover:text-red-500 transition-colors font-bold text-sm mt-auto">
                         <LogOut size={18} /> Logout
                     </button>
                 </div>
             </aside>
 
             {/* --- MAIN CONTENT --- */}
-            <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-0' : 'ml-0 lg:ml-64'} p-4 md:p-12`}>
+            <main className={`flex-1 transition-all duration-300 lg:ml-72 p-4 md:p-12`}>
                 
-                {/* Mobile Header Toggle */}
-                <div className="lg:hidden flex justify-between items-center mb-6">
-                    <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 bg-white/5 rounded-lg">
-                        <Menu size={24} />
+                {/* --- MOBILE HEADER --- */}
+                <div className="lg:hidden flex justify-between items-center mb-8 pt-2">
+                    <button onClick={() => setIsSidebarOpen(true)} className="p-3 bg-white/5 rounded-xl border border-white/10">
+                        <Menu size={22} className="text-brand-primary" />
                     </button>
-                    <span className="font-black text-brand-primary">NEWARK OPS</span>
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center">
+                            <span className="text-black font-black text-sm italic">N</span>
+                        </div>
+                        <span className="font-black text-white text-xs tracking-widest uppercase">Matrix</span>
+                    </div>
                 </div>
 
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
                     <div>
-                        <p className="text-brand-primary font-bold text-[10px] uppercase tracking-[0.3em] mb-2">Internal Surveillance</p>
-                        <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">Financial <span className="text-slate-600 font-medium">Matrix</span></h1>
+                        <p className="text-brand-primary font-bold text-[9px] uppercase tracking-[0.4em] mb-2">Administrative Hub</p>
+                        <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">Financial <span className="text-slate-700 font-medium italic">Matrix</span></h1>
                     </div>
-                    <div className="flex gap-3 w-full md:w-auto">
-                        <button onClick={exportData} className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white/5 border border-white/10 px-4 py-3 rounded-xl text-[10px] font-bold uppercase text-white hover:bg-white/10 transition-all">
-                            <Download size={14}/> CSV
+                    <div className="flex gap-2 w-full md:w-auto">
+                        <button onClick={exportData} className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white/5 border border-white/10 px-6 py-3.5 rounded-xl text-[10px] font-black uppercase text-white hover:bg-white/10 transition-all">
+                            <Download size={14}/> Export
                         </button>
-                        <button onClick={() => fetchData()} className={`p-3 bg-brand-primary rounded-xl text-black hover:scale-105 transition-all ${isSyncing ? 'animate-spin' : ''}`}>
+                        <button onClick={() => fetchData()} className={`p-3.5 bg-brand-primary rounded-xl text-black hover:scale-105 transition-all shadow-lg shadow-brand-primary/20 ${isSyncing ? 'animate-spin' : ''}`}>
                             <RefreshCw size={20}/>
                         </button>
                     </div>
@@ -130,7 +148,7 @@ const AdminDashboard = () => {
 
                 {view === 'dashboard' ? (
                     <div className="space-y-10">
-                        {/* STATS GRID - Responsive 1 to 4 columns */}
+                        {/* STATS GRID */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
                             <MetricCard label="Total Portfolios" val={stats.total} icon={<Activity/>} color="primary" />
                             <MetricCard label="Under Review" val={stats.pending} icon={<Clock/>} color="amber" />
@@ -138,50 +156,77 @@ const AdminDashboard = () => {
                             <MetricCard label="System Volume" val={`KES ${(stats.volume / 1000).toFixed(1)}K`} icon={<FileText/>} color="slate" />
                         </div>
 
-                        {/* DATA TABLE CONTAINER */}
-                        <div className="bg-white/[0.02] backdrop-blur-md rounded-3xl border border-white/5 shadow-2xl">
-                            <div className="p-6 md:p-8 border-b border-white/5 flex flex-col md:flex-row gap-4 justify-between items-center">
-                                <div className="flex flex-wrap gap-2 justify-center">
+                        {/* DATA VIEW */}
+                        <div className="bg-white/[0.02] backdrop-blur-md rounded-[2rem] border border-white/5 shadow-2xl overflow-hidden">
+                            <div className="p-5 md:p-8 border-b border-white/5 flex flex-col xl:flex-row gap-6 justify-between items-center">
+                                <div className="flex flex-wrap gap-2 justify-center xl:justify-start">
                                     {['all', 'pending', 'approved', 'disbursed', 'paid'].map(t => (
-                                        <button key={t} onClick={() => setActiveTab(t)} className={`px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === t ? 'bg-brand-primary text-black' : 'text-slate-500 hover:text-white bg-white/5'}`}>{t}</button>
+                                        <button key={t} onClick={() => setActiveTab(t)} className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${activeTab === t ? 'bg-brand-primary text-black border-brand-primary' : 'text-slate-500 border-white/5 bg-white/5 hover:text-white'}`}>{t}</button>
                                     ))}
                                 </div>
-                                <div className="relative w-full md:w-64">
-                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-                                    <input type="text" placeholder="Search..." className="w-full pl-10 pr-4 py-2.5 bg-black/40 border border-white/10 rounded-xl outline-none focus:border-brand-primary text-sm" onChange={(e) => setSearchTerm(e.target.value)} />
+                                <div className="relative w-full xl:w-80">
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={16} />
+                                    <input type="text" placeholder="Search borrower..." className="w-full pl-11 pr-4 py-3.5 bg-black/40 border border-white/5 rounded-2xl outline-none focus:border-brand-primary text-sm text-white placeholder:text-slate-700 transition-all" onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                             </div>
 
-                            <div className="overflow-x-auto">
+                            {/* --- RESPONSIVE TABLE/LIST --- */}
+                            <div className="block md:hidden p-4 space-y-4">
+                                {filteredLoans.map((loan) => (
+                                    <div key={loan._id} className="bg-white/5 border border-white/5 rounded-2xl p-5 space-y-4">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center font-black text-brand-primary border border-brand-primary/20">{loan.user?.name?.charAt(0)}</div>
+                                                <div>
+                                                    <p className="font-black text-white text-sm">{loan.user?.name}</p>
+                                                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">{loan.user?.email}</p>
+                                                </div>
+                                            </div>
+                                            <StatusBadge status={loan.status} />
+                                        </div>
+                                        <div className="flex justify-between items-center pt-2 border-t border-white/5">
+                                            <div>
+                                                <p className="text-[9px] font-black text-slate-600 uppercase">Amount</p>
+                                                <p className="font-black text-white">KES {loan.amount?.toLocaleString()}</p>
+                                            </div>
+                                            <button onClick={() => setSelectedLoan(loan)} className="p-3 bg-brand-primary rounded-xl text-black shadow-lg shadow-brand-primary/10">
+                                                <Eye size={18}/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="hidden md:block overflow-x-auto">
                                 <table className="w-full text-left">
-                                    <thead className="bg-white/[0.01] text-[10px] font-black uppercase text-slate-500">
+                                    <thead className="bg-white/[0.01] text-[10px] font-black uppercase text-slate-600">
                                         <tr>
-                                            <th className="px-8 py-4">Borrower</th>
-                                            <th className="px-8 py-4">Amount</th>
-                                            <th className="px-8 py-4">Status</th>
-                                            <th className="px-8 py-4 text-right">Action</th>
+                                            <th className="px-10 py-5">Borrower</th>
+                                            <th className="px-10 py-5">Amount</th>
+                                            <th className="px-10 py-5">Status</th>
+                                            <th className="px-10 py-5 text-right">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-white/5">
                                         {filteredLoans.map((loan) => (
                                             <tr key={loan._id} className="hover:bg-white/[0.02] transition-colors group">
-                                                <td className="px-8 py-6">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-lg bg-brand-primary/10 flex items-center justify-center font-bold text-brand-primary">{loan.user?.name?.charAt(0)}</div>
+                                                <td className="px-10 py-7">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-11 h-11 rounded-xl bg-brand-primary/10 flex items-center justify-center font-black text-brand-primary border border-brand-primary/10">{loan.user?.name?.charAt(0)}</div>
                                                         <div>
-                                                            <p className="font-bold text-white text-sm">{loan.user?.name}</p>
-                                                            <p className="text-[10px] text-slate-500">{loan.user?.email}</p>
+                                                            <p className="font-black text-white text-sm">{loan.user?.name}</p>
+                                                            <p className="text-[10px] text-slate-500 font-bold tracking-tight uppercase">{loan.user?.email}</p>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-8 py-6">
-                                                    <p className="font-bold text-white">KES {loan.amount?.toLocaleString()}</p>
+                                                <td className="px-10 py-7">
+                                                    <p className="font-black text-white">KES {loan.amount?.toLocaleString()}</p>
                                                 </td>
-                                                <td className="px-8 py-6">
+                                                <td className="px-10 py-7">
                                                     <StatusBadge status={loan.status} />
                                                 </td>
-                                                <td className="px-8 py-6 text-right">
-                                                    <button onClick={() => setSelectedLoan(loan)} className="p-2 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-brand-primary hover:text-black transition-all">
+                                                <td className="px-10 py-7 text-right">
+                                                    <button onClick={() => setSelectedLoan(loan)} className="p-2.5 bg-white/5 border border-white/5 text-white rounded-xl hover:bg-brand-primary hover:text-black hover:border-brand-primary transition-all shadow-xl">
                                                         <Eye size={18}/>
                                                     </button>
                                                 </td>
@@ -193,30 +238,30 @@ const AdminDashboard = () => {
                         </div>
                     </div>
                 ) : (
-                    /* USERS LIST */
-                    <div className="bg-white/[0.02] rounded-3xl border border-white/5 overflow-hidden">
-                         <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead className="bg-white/[0.01] text-[10px] font-black uppercase text-slate-500">
-                                    <tr><th className="px-8 py-4">Name</th><th className="px-8 py-4">Phone</th><th className="px-8 py-4 text-right">History</th></tr>
-                                </thead>
-                                <tbody className="divide-y divide-white/5">
-                                    {users.map(u => (
-                                        <tr key={u._id} className="hover:bg-white/[0.02]">
-                                            <td className="px-8 py-6">
-                                                <p className="font-bold text-white text-sm">{u.name}</p>
-                                                <p className="text-[10px] text-slate-500 uppercase">{u.email}</p>
-                                            </td>
-                                            <td className="px-8 py-6 font-mono text-brand-primary text-xs">{u.phone || 'N/A'}</td>
-                                            <td className="px-8 py-6 text-right">
-                                                <span className="text-[10px] font-bold bg-white/5 px-3 py-1 rounded-lg border border-white/10">
-                                                    {loans.filter(l => l.user?._id === u._id).length} Loans
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                    /* USERS LIST RESPONSIVE */
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-black text-slate-600 uppercase tracking-widest px-1">Network Identity Registry</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            {users.map(u => (
+                                <div key={u._id} className="bg-white/[0.02] p-6 rounded-[2rem] border border-white/5 hover:border-brand-primary/20 transition-all group">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center font-black text-brand-primary text-xl border border-white/5 group-hover:scale-110 transition-transform">{u.name?.charAt(0)}</div>
+                                        <div>
+                                            <p className="font-black text-white text-base">{u.name}</p>
+                                            <p className="text-[10px] text-slate-500 uppercase font-black tracking-tighter">{u.email}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between items-center pt-4 border-t border-white/5">
+                                        <div className="flex items-center gap-2 text-slate-400">
+                                            <Phone size={14} className="text-brand-primary" />
+                                            <span className="text-xs font-mono">{u.phone || 'N/A'}</span>
+                                        </div>
+                                        <span className="text-[9px] font-black bg-brand-primary/10 text-brand-primary px-3 py-1.5 rounded-lg border border-brand-primary/20 uppercase tracking-widest">
+                                            {loans.filter(l => l.user?._id === u._id).length} Loans
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 )}
@@ -224,41 +269,43 @@ const AdminDashboard = () => {
 
             {/* --- ACTION MODAL --- */}
             {selectedLoan && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-                    <div className="bg-[#0a0c10] border border-white/10 rounded-[2rem] w-full max-w-lg overflow-hidden shadow-2xl">
-                        <div className="p-6 border-b border-white/5 flex justify-between items-center">
-                            <h2 className="font-black text-white uppercase tracking-widest text-sm">Review Application</h2>
-                            <button onClick={() => setSelectedLoan(null)}><XCircle className="text-slate-500" /></button>
+                <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[150] flex items-center justify-center p-4 overflow-y-auto">
+                    <div className="bg-[#0a0c10] border border-white/10 rounded-[2.5rem] w-full max-w-lg my-auto overflow-hidden shadow-2xl">
+                        <div className="p-6 md:p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
+                            <h2 className="font-black text-white uppercase tracking-[0.2em] text-[10px]">Security Review</h2>
+                            <button onClick={() => setSelectedLoan(null)} className="p-2 hover:bg-white/5 rounded-xl transition-colors">
+                                <XCircle className="text-slate-500" />
+                            </button>
                         </div>
-                        <div className="p-8 space-y-6">
-                            <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 bg-brand-primary rounded-xl flex items-center justify-center text-black text-xl font-black">{selectedLoan.user?.name?.charAt(0)}</div>
+                        <div className="p-8 space-y-8">
+                            <div className="flex items-center gap-5">
+                                <div className="w-16 h-16 bg-brand-primary rounded-[1.5rem] flex items-center justify-center text-black text-2xl font-black shadow-lg shadow-brand-primary/20">{selectedLoan.user?.name?.charAt(0)}</div>
                                 <div>
-                                    <p className="text-xl font-bold text-white">{selectedLoan.user?.name}</p>
-                                    <p className="text-xs text-brand-primary uppercase tracking-wider">{selectedLoan.user?.phone}</p>
+                                    <p className="text-2xl font-black text-white tracking-tight">{selectedLoan.user?.name}</p>
+                                    <p className="text-[10px] text-brand-primary font-black uppercase tracking-widest">{selectedLoan.user?.phone}</p>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                                    <p className="text-[10px] font-bold text-slate-500 uppercase">Amount</p>
-                                    <p className="text-lg font-bold text-white">KES {selectedLoan.amount?.toLocaleString()}</p>
+                                <div className="bg-white/5 p-5 rounded-2xl border border-white/5 shadow-inner">
+                                    <p className="text-[9px] font-black text-slate-600 uppercase mb-1">Principal</p>
+                                    <p className="text-xl font-black text-white">KES {selectedLoan.amount?.toLocaleString()}</p>
                                 </div>
-                                <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                                    <p className="text-[10px] font-bold text-slate-500 uppercase">Repayable</p>
-                                    <p className="text-lg font-bold text-emerald-400">KES {selectedLoan.totalRepayable?.toLocaleString()}</p>
+                                <div className="bg-white/5 p-5 rounded-2xl border border-white/5 shadow-inner">
+                                    <p className="text-[9px] font-black text-slate-600 uppercase mb-1">Settlement</p>
+                                    <p className="text-xl font-black text-emerald-400">KES {selectedLoan.totalRepayable?.toLocaleString()}</p>
                                 </div>
                             </div>
 
-                            <div className="bg-white/5 p-5 rounded-xl border border-white/5">
-                                <p className="text-[10px] font-bold text-brand-primary uppercase mb-2">Purpose</p>
-                                <p className="text-sm text-slate-300 italic">"{selectedLoan.purpose}"</p>
+                            <div className="bg-white/5 p-6 rounded-[1.5rem] border border-white/5">
+                                <p className="text-[9px] font-black text-brand-primary uppercase mb-3 tracking-widest">Purpose of Credit</p>
+                                <p className="text-sm text-slate-400 italic leading-relaxed">"{selectedLoan.purpose}"</p>
                             </div>
 
                             {selectedLoan.status === 'pending' && (
-                                <div className="grid grid-cols-2 gap-4 pt-2">
-                                    <button onClick={() => updateStatus(selectedLoan._id, 'approved')} className="bg-emerald-600 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-emerald-500 transition-all">Approve & Pay</button>
-                                    <button onClick={() => updateStatus(selectedLoan._id, 'rejected')} className="bg-white/5 border border-white/10 text-rose-500 py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-rose-500/10 transition-all">Decline</button>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                                    <button onClick={() => updateStatus(selectedLoan._id, 'approved')} className="bg-emerald-600 text-white py-4.5 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/10">Approve & Pay</button>
+                                    <button onClick={() => updateStatus(selectedLoan._id, 'rejected')} className="bg-white/5 border border-white/10 text-rose-500 py-4.5 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] hover:bg-rose-500/10 transition-all">Reject Claim</button>
                                 </div>
                             )}
                         </div>
@@ -272,8 +319,8 @@ const AdminDashboard = () => {
 // --- MINI COMPONENTS ---
 
 const SidebarLink = ({ active, onClick, icon, label }) => (
-    <button onClick={onClick} className={`w-full flex items-center gap-3 px-5 py-3.5 rounded-xl font-bold text-sm transition-all ${active ? 'bg-brand-primary text-black' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}>
-        {icon} {label}
+    <button onClick={onClick} className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${active ? 'bg-brand-primary text-black shadow-lg shadow-brand-primary/20' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>
+        {React.cloneElement(icon, { size: 18 })} {label}
     </button>
 );
 
@@ -282,13 +329,13 @@ const MetricCard = ({ label, val, icon, color }) => {
         primary: 'text-brand-primary border-brand-primary/20 bg-brand-primary/5',
         amber: 'text-amber-500 border-amber-500/20 bg-amber-500/5',
         emerald: 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5',
-        slate: 'text-slate-400 border-white/10 bg-white/5'
+        slate: 'text-slate-600 border-white/10 bg-white/5'
     };
     return (
-        <div className="bg-white/[0.02] p-6 rounded-3xl border border-white/5">
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 border ${colors[color]}`}>{icon}</div>
-            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1">{label}</p>
-            <p className="text-2xl font-black text-white">{val}</p>
+        <div className="bg-white/[0.02] p-8 rounded-[2.5rem] border border-white/5 shadow-xl transition-transform hover:-translate-y-1">
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 border shadow-inner ${colors[color]}`}>{icon}</div>
+            <p className="text-slate-600 text-[9px] font-black uppercase tracking-[0.2em] mb-2">{label}</p>
+            <p className="text-3xl font-black text-white tracking-tighter">{val}</p>
         </div>
     );
 };
@@ -301,7 +348,7 @@ const StatusBadge = ({ status }) => {
         paid: 'text-cyan-400 border-cyan-400/20 bg-cyan-400/5',
         rejected: 'text-rose-500 border-rose-500/20 bg-rose-500/5' 
     };
-    return <span className={`px-3 py-1 rounded-lg text-[9px] font-bold uppercase border ${config[status]}`}>{status}</span>;
+    return <span className={`px-4 py-1.5 rounded-xl text-[8px] font-black uppercase border tracking-widest ${config[status]}`}>{status}</span>;
 };
 
 export default AdminDashboard;
